@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.crashinvaders.common.SecondOrderDynamics2D;
 import com.esotericsoftware.spine.Bone;
 import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.utils.SkeletonActor;
 
 public class SodFreeRotationMod implements ISkeletonModifier {
 
@@ -28,7 +27,7 @@ public class SodFreeRotationMod implements ISkeletonModifier {
     }
 
     @Override
-    public void update(SkeletonActor skeletonActor, float deltaTime) {
+    public void update(CustomSkeletonActor skeletonActor, float deltaTime) {
         computeRotationTarget();
         float srcRotTargetX = tmpVec.x;
         float srcRotTargetY = tmpVec.y;

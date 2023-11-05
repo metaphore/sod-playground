@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.crashinvaders.spine.CustomSkeletonActor
 import com.crashinvaders.spine.SodPositionMod
 import com.crashinvaders.spine.SodRotateToParentMod
 import com.esotericsoftware.spine.*
@@ -43,7 +44,7 @@ class SodScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
     private val stage = Stage(ExtendViewport(1920f, 1080f), batch).alsoRegister()
 
     private val contentRoot : Group
-    private val skelActor : SkeletonActor
+    private val skelActor : CustomSkeletonActor
 
     private val sodModPosition : SodPositionMod
     private val sodModRotation : SodRotateToParentMod
@@ -57,7 +58,7 @@ class SodScreen : KtxScreen, DisposableRegistry by DisposableContainer() {
             it.scale = 0.5f
             it.readSkeletonData(Gdx.files.internal("skeletons/chibi-stickers.json"))
         }
-        skelActor = SkeletonActor(
+        skelActor = CustomSkeletonActor(
                 SkeletonRenderer(),
                 Skeleton(skelData),
                 AnimationState(AnimationStateData(skelData)))

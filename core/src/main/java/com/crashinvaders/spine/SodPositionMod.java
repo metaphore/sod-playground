@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.crashinvaders.common.SecondOrderDynamics2D;
 import com.esotericsoftware.spine.Bone;
 import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.utils.SkeletonActor;
 
 public class SodPositionMod implements ISkeletonModifier {
 
@@ -26,7 +25,7 @@ public class SodPositionMod implements ISkeletonModifier {
     }
 
     @Override
-    public void update(SkeletonActor skeletonActor, float deltaTime) {
+    public void update(CustomSkeletonActor skeletonActor, float deltaTime) {
         float srcPosX = bone.getWorldX();
         float srcPosY = bone.getWorldY();
         sod.update(deltaTime, srcPosX, srcPosY);

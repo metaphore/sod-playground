@@ -31,122 +31,83 @@ package com.esotericsoftware.spine.utils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import com.badlogic.gdx.utils.Array;
-import com.crashinvaders.spine.ISkeletonModifier;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonRenderer;
-import com.esotericsoftware.spine.SkeletonRendererDebug;
 
 /** A scene2d actor that draws a skeleton. */
 public class SkeletonActor extends Actor {
+    private SkeletonRenderer renderer;
+    private Skeleton skeleton;
+    AnimationState state;
+    private boolean resetBlendFunction = true;
 
-    private final Array<ISkeletonModifier> skeletonModifiers = new Array<>();
+    /** Creates an uninitialized SkeletonActor. The renderer, skeleton, and animation state must be set before use. */
+    public SkeletonActor () {
+    }
 
-	private SkeletonRenderer renderer;
-	private Skeleton skeleton;
-	AnimationState state;
-	private boolean resetBlendFunction = true;
+    public SkeletonActor (SkeletonRenderer renderer, Skeleton skeleton, AnimationState state) {
+        this.renderer = renderer;
+        this.skeleton = skeleton;
+        this.state = state;
+    }
 
-    private SkeletonRendererDebug rendererDebug = null;
+    public void act (float delta) {
+        state.update(delta);
+        state.apply(skeleton);
+        super.act(delta);
+    }
 
-	/** Creates an uninitialized SkeletonActor. The renderer, skeleton, and animation state must be set before use. */
-	public SkeletonActor () {
-	}
+    public void draw (Batch batch, float parentAlpha) {
+        int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
+        int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
 
-	public SkeletonActor (SkeletonRenderer renderer, Skeleton skeleton, AnimationState state) {
-		this.renderer = renderer;
-		this.skeleton = skeleton;
-		this.state = state;
-	}
+        Color color = skeleton.getColor();
+        float oldAlpha = color.a;
+        skeleton.getColor().a *= parentAlpha;
 
-	public void act (float delta) {
-		state.update(delta);
-		state.apply(skeleton);
-
-        skeleton.getRootBone().setRotation(getRotation());
         skeleton.setPosition(getX(), getY());
         skeleton.updateWorldTransform();
+        renderer.draw(batch, skeleton);
 
-        super.act(delta);
+        if (resetBlendFunction) batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
 
-        for (int i = 0; i < skeletonModifiers.size; i++) {
-            skeletonModifiers.get(i).update(this, delta);
-        }
-	}
-
-	public void draw (Batch batch, float parentAlpha) {
-		int blendSrc = batch.getBlendSrcFunc(), blendDst = batch.getBlendDstFunc();
-		int blendSrcAlpha = batch.getBlendSrcFuncAlpha(), blendDstAlpha = batch.getBlendDstFuncAlpha();
-
-		Color color = skeleton.getColor();
-		float oldAlpha = color.a;
-		skeleton.getColor().a *= parentAlpha;
-
-		renderer.draw(batch, skeleton);
-
-		if (resetBlendFunction) batch.setBlendFunctionSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
-
-		color.a = oldAlpha;
-	}
-
-    @Override
-    public void drawDebug(ShapeRenderer shapes) {
-        super.drawDebug(shapes);
-
-        if (rendererDebug != null) {
-            rendererDebug.draw(skeleton);
-        }
+        color.a = oldAlpha;
     }
 
     public SkeletonRenderer getRenderer () {
-		return renderer;
-	}
-
-	public void setRenderer (SkeletonRenderer renderer) {
-		this.renderer = renderer;
-	}
-
-	public Skeleton getSkeleton () {
-		return skeleton;
-	}
-
-	public void setSkeleton (Skeleton skeleton) {
-		this.skeleton = skeleton;
-	}
-
-	public AnimationState getAnimationState () {
-		return state;
-	}
-
-	public void setAnimationState (AnimationState state) {
-		this.state = state;
-	}
-
-	public boolean getResetBlendFunction () {
-		return resetBlendFunction;
-	}
-
-	/** If false, the blend function will be left as whatever {@link SkeletonRenderer#draw(Batch, Skeleton)} set. This can reduce
-	 * batch flushes in some cases, but means other rendering may need to first set the blend function. Default is true. */
-	public void setResetBlendFunction (boolean resetBlendFunction) {
-		this.resetBlendFunction = resetBlendFunction;
-	}
-
-    public void addSkeletonModifier(ISkeletonModifier skeletonModifier) {
-        this.skeletonModifiers.add(skeletonModifier);
+        return renderer;
     }
 
-    public void setRendererDebug(SkeletonRendererDebug rendererDebug) {
-        this.rendererDebug = rendererDebug;
+    public void setRenderer (SkeletonRenderer renderer) {
+        this.renderer = renderer;
     }
 
-    public void resetModifiers() {
-        for (ISkeletonModifier modifier : skeletonModifiers) {
-            modifier.reset();
-        }
+    public Skeleton getSkeleton () {
+        return skeleton;
+    }
+
+    public void setSkeleton (Skeleton skeleton) {
+        this.skeleton = skeleton;
+    }
+
+    public AnimationState getAnimationState () {
+        return state;
+    }
+
+    public void setAnimationState (AnimationState state) {
+        this.state = state;
+    }
+
+    public boolean getResetBlendFunction () {
+        return resetBlendFunction;
+    }
+
+    /** If false, the blend function will be left as whatever {@link SkeletonRenderer#draw(Batch, Skeleton)} set. This can reduce
+     * batch flushes in some cases, but means other rendering may need to first set the blend function. Default is true. */
+    public void setResetBlendFunction (boolean resetBlendFunction) {
+        this.resetBlendFunction = resetBlendFunction;
     }
 }

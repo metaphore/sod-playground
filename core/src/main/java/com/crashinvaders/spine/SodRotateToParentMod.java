@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.crashinvaders.common.SecondOrderDynamics1D;
 import com.esotericsoftware.spine.Bone;
 import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.utils.SkeletonActor;
 
 public class SodRotateToParentMod implements ISkeletonModifier {
 
@@ -28,7 +27,7 @@ public class SodRotateToParentMod implements ISkeletonModifier {
     }
 
     @Override
-    public void update(SkeletonActor skeletonActor, float deltaTime) {
+    public void update(CustomSkeletonActor skeletonActor, float deltaTime) {
 //        float srcRotation = baseRotation + computeAngleToParent();
         float srcRotation = baseRotation + computeAngleToParent();
         sod.update(deltaTime, srcRotation);
